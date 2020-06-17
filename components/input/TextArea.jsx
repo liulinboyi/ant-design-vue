@@ -5,9 +5,10 @@ import hasProp, { getListeners, getOptionProps } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
 import { fixControlledValue, resolveOnChange } from './Input';
 import PropTypes from '../_util/vue-types';
+import { inject } from 'vue';
 
 const TextAreaProps = {
-  ...inputProps,
+  ...inputProps(),
   autosize: PropTypes.oneOfType([Object, Boolean]),
   autoSize: PropTypes.oneOfType([Object, Boolean]),
 };
@@ -22,8 +23,10 @@ export default {
   props: {
     ...TextAreaProps,
   },
-  inject: {
-    configProvider: { default: () => ConfigConsumerProps },
+  setup() {
+    return {
+      configProvider: inject('configProvider', ConfigConsumerProps),
+    };
   },
   data() {
     const value = typeof this.value === 'undefined' ? this.defaultValue : this.value;
@@ -43,6 +46,7 @@ export default {
         this.focus();
       }
     });
+    console.log(this, 'textarea');
   },
   methods: {
     setValue(value, callback) {
@@ -96,10 +100,9 @@ export default {
     renderTextArea(prefixCls) {
       const props = getOptionProps(this);
       const resizeProps = {
-        props: {
-          ...props,
-          prefixCls,
-        },
+        props: {},
+        ...props,
+        prefixCls,
         on: {
           ...getListeners(this),
           input: this.handleChange,
@@ -114,16 +117,16 @@ export default {
     const { stateValue, prefixCls: customizePrefixCls } = this;
     const getPrefixCls = this.configProvider.getPrefixCls;
     const prefixCls = getPrefixCls('input', customizePrefixCls);
+    console.log(prefixCls, 'prefixCls');
 
     const props = {
-      props: {
-        ...getOptionProps(this),
-        prefixCls,
-        inputType: 'text',
-        value: fixControlledValue(stateValue),
-        element: this.renderTextArea(prefixCls),
-        handleReset: this.handleReset,
-      },
+      props: {},
+      ...getOptionProps(this),
+      prefixCls,
+      inputType: 'text',
+      value: fixControlledValue(stateValue),
+      element: this.renderTextArea(prefixCls),
+      handleReset: this.handleReset,
       on: getListeners(this),
     };
     return <ClearableLabeledInput {...props} />;

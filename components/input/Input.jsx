@@ -5,6 +5,7 @@ import inputProps from './inputProps';
 import { hasProp, getComponentFromProp, getListeners, getOptionProps } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
 import ClearableLabeledInput from './ClearableLabeledInput';
+import { inject } from 'vue';
 
 function noop() {}
 
@@ -57,10 +58,12 @@ export default {
     event: 'change.value',
   },
   props: {
-    ...inputProps,
+    ...inputProps(),
   },
-  inject: {
-    configProvider: { default: () => ConfigConsumerProps },
+  setup() {
+    return {
+      configProvider: inject('configProvider', ConfigConsumerProps),
+    };
   },
   data() {
     const props = this.$props;
@@ -81,6 +84,7 @@ export default {
       }
       this.clearPasswordValueAttribute();
     });
+    console.log(this, 'input');
   },
   beforeUnmount() {
     if (this.removePasswordTimeout) {
@@ -146,6 +150,7 @@ export default {
         domProps: {
           value: fixControlledValue(stateValue),
         },
+        ...this.$props,
         attrs: { ...otherProps, ...this.$attrs },
         on: {
           ...getListeners(this),
@@ -187,9 +192,14 @@ export default {
     },
   },
   render() {
+    console.log(this.$props.type, 'this.$props.type', this.$props, getOptionProps(this));
+
     if (this.$props.type === 'textarea') {
+      console.log(...getOptionProps(this), '...getOptionProps(this)');
+
       const textareaProps = {
-        props: this.$props,
+        // props: this.$props,
+        ...this.$props,
         attrs: this.$attrs,
         on: {
           ...getListeners(this),
@@ -209,20 +219,21 @@ export default {
     const suffix = getComponentFromProp(this, 'suffix');
     const prefix = getComponentFromProp(this, 'prefix');
     const props = {
-      props: {
-        ...getOptionProps(this),
-        prefixCls,
-        inputType: 'input',
-        value: fixControlledValue(stateValue),
-        element: this.renderInput(prefixCls),
-        handleReset: this.handleReset,
-        addonAfter,
-        addonBefore,
-        suffix,
-        prefix,
-      },
+      // props: {},
+      ...getOptionProps(this),
+      prefixCls,
+      inputType: 'input',
+      value: fixControlledValue(stateValue),
+      element: this.renderInput(prefixCls),
+      handleReset: this.handleReset,
+      addonAfter,
+      addonBefore,
+      suffix,
+      prefix,
       on: getListeners(this),
     };
+    console.log(props, 'props');
+
     return <ClearableLabeledInput {...props} />;
   },
 };

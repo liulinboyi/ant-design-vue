@@ -33,6 +33,9 @@ const ClearableLabeledInput = {
     className: PropTypes.string,
     readOnly: PropTypes.bool,
   },
+  mounted() {
+    console.log(this, 'ClearableLabeledInput');
+  },
   methods: {
     renderClearIcon(prefixCls) {
       const { allowClear, value, disabled, readOnly, inputType, handleReset } = this.$props;
@@ -67,6 +70,8 @@ const ClearableLabeledInput = {
     },
 
     renderLabeledIcon(prefixCls, element) {
+      console.log(element, 'element');
+
       const props = this.$props;
       const suffix = this.renderSuffix(prefixCls);
       if (!hasPrefixSuffix(this)) {
@@ -101,6 +106,8 @@ const ClearableLabeledInput = {
 
     renderInputWithLabel(prefixCls, labeledElement) {
       const { addonBefore, addonAfter, style, size, className } = this.$props;
+      console.log(addonBefore, addonAfter, style, size, className);
+
       // Not wrap when there is not addons
       if (!addonBefore && !addonAfter) {
         return labeledElement;
@@ -160,7 +167,10 @@ const ClearableLabeledInput = {
 
     renderClearableLabeledInput() {
       const { prefixCls, inputType, element } = this.$props;
+      console.log(this.$props, 'this.$props');
+
       if (inputType === ClearableInputType[0]) {
+        console.log(inputType);
         return this.renderTextAreaWithClearIcon(prefixCls, element);
       }
       return this.renderInputWithLabel(prefixCls, this.renderLabeledIcon(prefixCls, element));

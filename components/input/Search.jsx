@@ -9,6 +9,7 @@ import { cloneElement } from '../_util/vnode';
 import PropTypes from '../_util/vue-types';
 import { getOptionProps, getComponentFromProp, getListeners } from '../_util/props-util';
 import { ConfigConsumerProps } from '../config-provider';
+import { inject } from 'vue';
 
 export default {
   name: 'AInputSearch',
@@ -18,12 +19,14 @@ export default {
     event: 'change.value',
   },
   props: {
-    ...inputProps,
+    ...inputProps(),
     // 不能设置默认值 https://github.com/vueComponent/ant-design-vue/issues/1916
     enterButton: PropTypes.any,
   },
-  inject: {
-    configProvider: { default: () => ConfigConsumerProps },
+  setup() {
+    return {
+      configProvider: inject('configProvider', ConfigConsumerProps),
+    };
   },
   methods: {
     onChange(e) {
@@ -163,16 +166,15 @@ export default {
     const on = { ...getListeners(this) };
     delete on.search;
     const inputProps = {
-      props: {
-        ...others,
-        prefixCls: inputPrefixCls,
-        size,
-        suffix: this.renderSuffix(prefixCls),
-        prefix: getComponentFromProp(this, 'prefix'),
-        addonAfter: this.renderAddonAfter(prefixCls),
-        addonBefore,
-        className: inputClassName,
-      },
+      // props: {},
+      ...others,
+      prefixCls: inputPrefixCls,
+      size,
+      suffix: this.renderSuffix(prefixCls),
+      prefix: getComponentFromProp(this, 'prefix'),
+      addonAfter: this.renderAddonAfter(prefixCls),
+      addonBefore,
+      className: inputClassName,
       attrs: this.$attrs,
       ref: 'input',
       on: {
@@ -181,6 +183,8 @@ export default {
         change: this.onChange,
       },
     };
+    console.log(inputProps, 'inputProps');
+
     return <Input {...inputProps} />;
   },
 };

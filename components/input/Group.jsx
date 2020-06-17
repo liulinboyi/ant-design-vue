@@ -13,8 +13,10 @@ export default {
     },
     compact: Boolean,
   },
-  inject: {
-    configProvider: { default: () => ConfigConsumerProps },
+  setup() {
+    return {
+      configProvider: inject('configProvider', ConfigConsumerProps),
+    };
   },
   computed: {
     classes() {

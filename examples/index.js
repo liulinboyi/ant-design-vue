@@ -30,6 +30,7 @@ import notification from 'ant-design-vue/notification';
 import message from 'ant-design-vue/message';
 import Modal from 'ant-design-vue/modal';
 import Menu from 'ant-design-vue/menu';
+import Input from 'ant-design-vue/input';
 import 'ant-design-vue/style.js';
 
 const app = createApp(App);
@@ -63,4 +64,5 @@ app
   .use(Popover)
   .use(Modal)
   .use(Menu)
+  .use(Input)
   .mount('#app');

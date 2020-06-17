@@ -21,7 +21,7 @@ export default {
     event: 'change.value',
   },
   props: {
-    ...inputProps,
+    ...inputProps(),
     prefixCls: PropTypes.string.def('ant-input-password'),
     inputPrefixCls: PropTypes.string.def('ant-input'),
     action: PropTypes.string.def('click'),

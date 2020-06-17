@@ -1,5 +1,5 @@
 import PropTypes from '../_util/vue-types';
-export default {
+export default () => ({
   prefixCls: PropTypes.string,
   inputPrefixCls: PropTypes.string,
   defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -33,4 +33,4 @@ export default {
   maxLength: PropTypes.number,
   loading: PropTypes.bool,
   className: PropTypes.string,
-};
+});

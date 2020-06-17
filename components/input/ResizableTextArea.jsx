@@ -14,7 +14,7 @@ const RESIZE_STATUS_RESIZING = 1;
 const RESIZE_STATUS_RESIZED = 2;
 
 const TextAreaProps = {
-  ...inputProps,
+  ...inputProps(),
   autosize: PropTypes.oneOfType([Object, Boolean]),
   autoSize: PropTypes.oneOfType([Object, Boolean]),
 };
@@ -29,6 +29,8 @@ const ResizableTextArea = {
   },
   mixins: [BaseMixin],
   mounted() {
+    console.log(this, 'ResizableTextArea');
+
     this.resizeTextarea();
   },
   beforeUnmount() {
@@ -61,12 +63,20 @@ const ResizableTextArea = {
     },
 
     resizeTextarea() {
+      console.log(this.$props.autoSize, this.$props.autosize);
+
       const autoSize = this.$props.autoSize || this.$props.autosize;
-      if (!autoSize || !this.$refs.textArea) {
+      if (!autoSize || !this.$refs.resize.$refs.textArea) {
         return;
       }
+
       const { minRows, maxRows } = autoSize;
-      const textareaStyles = calculateNodeHeight(this.$refs.textArea, false, minRows, maxRows);
+      const textareaStyles = calculateNodeHeight(
+        this.$refs.resize.$refs.textArea,
+        false,
+        minRows,
+        maxRows,
+      );
       this.setState({ textareaStyles, resizeStatus: RESIZE_STATUS_RESIZING }, () => {
         raf.cancel(this.resizeFrameId);
         this.resizeFrameId = raf(() => {
@@ -82,10 +92,10 @@ const ResizableTextArea = {
     // https://github.com/ant-design/ant-design/issues/21870
     fixFirefoxAutoScroll() {
       try {
-        if (document.activeElement === this.$refs.textArea) {
-          const currentStart = this.$refs.textArea.selectionStart;
-          const currentEnd = this.$refs.textArea.selectionEnd;
-          this.$refs.textArea.setSelectionRange(currentStart, currentEnd);
+        if (document.activeElement === this.$refs.resize.$refs.textArea) {
+          const currentStart = this.$refs.resize.$refs.textArea.selectionStart;
+          const currentEnd = this.$refs.resize.$refs.textArea.selectionEnd;
+          this.$refs.resize.$refs.textArea.setSelectionRange(currentStart, currentEnd);
         }
       } catch (e) {
         // Fix error in Chrome:
@@ -129,6 +139,7 @@ const ResizableTextArea = {
           : null),
       };
       const textareaProps = {
+        ...props,
         attrs: otherProps,
         domProps,
         style,
@@ -141,7 +152,11 @@ const ResizableTextArea = {
         ],
       };
       return (
-        <ResizeObserver onResize={this.handleResize} disabled={!(autoSize || autosize)}>
+        <ResizeObserver
+          onResize={this.handleResize}
+          disabled={!(autoSize || autosize)}
+          ref="resize"
+        >
           <textarea {...textareaProps} ref="textArea" />
         </ResizeObserver>
       );
